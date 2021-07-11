@@ -15,7 +15,8 @@ class MovieDetailView: UIViewController {
         didSet{
             guard let movieItem = movie else {return}
             guard let imageUrl = URL(string: imageBaseUrl.appending(movieItem.poster_path)) else { return }
-            guard let imageUrl2 = URL(string: imageBaseUrl.appending(movieItem.backdrop_path)) else { return }
+            
+            guard let imageUrl2 = URL(string: imageBaseUrl.appending(movieItem.backdrop_path ?? movieItem.poster_path)) else { return }
             
             posterView.load(url: imageUrl)
             poster2View.load(url: imageUrl2)
