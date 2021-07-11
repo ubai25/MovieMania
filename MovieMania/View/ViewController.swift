@@ -51,7 +51,9 @@ class ViewController: UIViewController {
         }.disposed(by: bag)
         
         tableView.rx.modelSelected(Movie.self).bind { movie in
-            print(movie.title)
+            let vc = MovieDetailView()
+            vc.movie = movie
+            self.present(vc, animated: true, completion: nil)
         }.disposed(by: bag)
         
         viewModel.fetchItem()

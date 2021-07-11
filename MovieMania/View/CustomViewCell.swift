@@ -33,7 +33,7 @@ class CustomViewCell: UITableViewCell {
     }
     let posterView: UIImageView = {
         let square = UIImageView()
-        square.backgroundColor = UIColor.red
+        square.backgroundColor = UIColor.white
         square.layer.cornerRadius = 10
         
         return square
@@ -99,7 +99,7 @@ class CustomViewCell: UITableViewCell {
         posterView.frame = CGRect(x: 10,
                                   y: 10,
                                   width: UIScreen.screenWidth/4,
-                                  height: UIScreen.screenHeight/5.5)
+                                  height: (UIScreen.screenWidth/4)*1.5)
         
         titleView.frame = CGRect(x: 20 + posterView.frame.width,
                                  y: 10,
