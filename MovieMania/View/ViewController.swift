@@ -17,14 +17,7 @@ class ViewController: UIViewController {
         return table
     
     }()
-    
-    private let button: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(systemName: "pencil.tip.crop.circle.badge.plus"), for: .normal)
-        
-        return button
-    }()
-    
+
     private var viewModel = MovieViewModel()
     private var bag = DisposeBag()
 
@@ -33,11 +26,9 @@ class ViewController: UIViewController {
         tableView.delegate = self
         tableView.frame = view.bounds
         
-        button.frame = CGRect(x: 20, y: UIScreen.screenHeight-50, width: 30, height: 30)
-        
         view.addSubview(tableView)
-        view.addSubview(button)
         
+        print("bind Data")
         bindTableData()
     }
     
@@ -47,15 +38,18 @@ class ViewController: UIViewController {
             to: tableView.rx.items(cellIdentifier: CustomViewCell.identifier, cellType: CustomViewCell.self)
         ) { row, model, cell in
             cell.movie = model
-            
         }.disposed(by: bag)
         
-        tableView.rx.modelSelected(Movie.self).bind { movie in
+        Observable
+        .zip(tableView.rx.itemSelected, tableView.rx.modelSelected(Movie.self))
+        .bind { index, movie in
             let vc = MovieDetailView()
             vc.movie = movie
+            self.tableView.deselectRow(at: index, animated: true)
             self.present(vc, animated: true, completion: nil)
         }.disposed(by: bag)
         
+        print("fetch nih!")
         viewModel.fetchItem()
     }
     

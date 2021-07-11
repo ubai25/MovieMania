@@ -8,58 +8,25 @@
 import Foundation
 import RxSwift
 import RxCocoa
+import RealmSwift
 
 struct MovieViewModel {
     var items = PublishSubject<[Movie]>()
-    let api_key = "03e80ec218d275ecbcd184de03af1ad2"
-    
-//    func fetchItem(){
-//        var listResponse: ListResponse
-//        var movieList = [Movie]()
-//
-//        if let path = Bundle.main.path(forResource: "MockData", ofType: "json"){
-//            print(path)
-//            do{
-//                let data = try Data(contentsOf: URL(fileURLWithPath: path))
-//                listResponse = try JSONDecoder().decode(ListResponse.self, from: data)
-//
-//                movieList = listResponse.results
-//            }catch{
-//                print(error)
-//            }
-//
-//            items.onNext(movieList)
-//            items.onCompleted()
-//        }
-//    }
+    let realm = try! Realm()
     
     func fetchItem() {
-        let url = "https://api.themoviedb.org/3/movie/popular?api_key=\(api_key)&language=en-US&page=1"
-        var movieList = [Movie]()
-        print(url)
-        guard let url = URL(string: url) else { return }
-
-        URLSession.shared.dataTask(with: url){
-            data, response, err in
+        var movieList: Results<Movie>?
+        
+        DispatchQueue.main.async {
+            print("Fetching!")
+            movieList = realm.objects(Movie.self)
             
-            var listResponse: ListResponse
-            
-            print(data)
-            
-            if(err == nil){
-                do{
-                    listResponse = try JSONDecoder().decode(ListResponse.self, from: data!)
-                    
-                    DispatchQueue.main.async {
-                        movieList = listResponse.results
-                        items.onNext(movieList)
-                        items.onCompleted()
-                    }
-                    
-                }catch{
-                    print(error)
-                }
+            guard let movies = movieList else {
+                return
             }
-        }.resume()
+            
+            items.onNext(Array(movies))
+            items.onCompleted()
+        }
     }
 }
