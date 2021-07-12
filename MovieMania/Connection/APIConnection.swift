@@ -6,56 +6,78 @@
 //
 
 import Foundation
-import RealmSwift
+import UIKit
+import RxSwift
 
-struct APIConnection {
+class APIConnection {
     let api_key = "03e80ec218d275ecbcd184de03af1ad2"
-    let realm = try! Realm()
+    let imageBaseUrl = "https://www.themoviedb.org/t/p/w440_and_h660_face"
+    var disposable : Disposable?
     
-    init() {
-        callApi()
+    deinit {
+        disposable?.dispose()
     }
     
-    func callApi() {
+    func callApi() -> Observable<Bool> {
         let url = "https://api.themoviedb.org/3/movie/popular?api_key=\(api_key)&language=en-US&page=1"
         var movieList = [Movie]()
         print(url)
         
-        guard let url = URL(string: url) else { return }
-
-        URLSession.shared.dataTask(with: url){
-            data, response, err in
+        return Observable.create { observer -> Disposable in
             
-            var listResponse: ListResponse
+            guard let url = URL(string: url) else { return Disposables.create()}
             
-            if(err == nil){
-                do{
-                    listResponse = try JSONDecoder().decode(ListResponse.self, from: data!)
+            URLSession.shared.dataTask(with: url){
+                data, response, err in
+                
+                var listResponse: ListResponse
+                
+                if(err == nil){
+                    let realmRepo = RealmRepo()
                     
-                    DispatchQueue.main.async {
-                        movieList = listResponse.results
+                    do{
+                        listResponse = try JSONDecoder().decode(ListResponse.self, from: data!)
                         
-                        for movie in movieList{
-                            do{
-                                try realm.write{
-                                    realm.add(movie)
+                        movieList = listResponse.results
+                        realmRepo.deleteAll()
+                        
+                        self.disposable = realmRepo.saveMovies(movies: movieList)
+                            .subscribe(onNext: { result in
+                                if(result){
+                                    observer.onNext(true)
+                                    observer.onCompleted()
                                 }
-                            }catch{
-                                print("Error saving context : \(error)")
-                            }
-                        }
+                            })
+                        
+                    }catch{
+                        print(error)
                     }
-                    
-                }catch{
-                    print(error)
                 }
+            }.resume()
+            return Disposables.create()
+        }
+    }
+    
+    func load(path: String) -> UIImage? {
+        
+        guard let url = URL(string: imageBaseUrl.appending(path)) else { return nil }
+        
+        if let data = try? Data(contentsOf: url) {
+            if let image = UIImage(data: data) {
+                return image
             }
-        }.resume()
+        }
+        return nil
     }
 }
 
 extension UIImageView {
-    func load(url: URL) {
+    
+    func load(path: String) {
+        let imageBaseUrl = "https://www.themoviedb.org/t/p/w440_and_h660_face"
+        
+        guard let url = URL(string: imageBaseUrl.appending(path)) else { return }
+        
         DispatchQueue.global().async { [weak self] in
             if let data = try? Data(contentsOf: url) {
                 if let image = UIImage(data: data) {

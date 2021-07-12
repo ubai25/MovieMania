@@ -27,8 +27,6 @@ class ViewController: UIViewController {
         tableView.frame = view.bounds
         
         view.addSubview(tableView)
-        
-        print("bind Data")
         bindTableData()
     }
     
@@ -41,7 +39,7 @@ class ViewController: UIViewController {
         }.disposed(by: bag)
         
         Observable
-        .zip(tableView.rx.itemSelected, tableView.rx.modelSelected(Movie.self))
+        .zip(tableView.rx.itemSelected, tableView.rx.modelSelected(MovieRealm.self))
         .bind { index, movie in
             let vc = MovieDetailView()
             vc.movie = movie
@@ -49,7 +47,6 @@ class ViewController: UIViewController {
             self.present(vc, animated: true, completion: nil)
         }.disposed(by: bag)
         
-        print("fetch nih!")
         viewModel.fetchItem()
     }
     
@@ -57,6 +54,6 @@ class ViewController: UIViewController {
 
 extension ViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        UIScreen.screenHeight/5.5 + 20
+        (UIScreen.screenWidth/4)*1.5 + 20
     }
 }

@@ -21,17 +21,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         print(Realm.Configuration.defaultConfiguration.fileURL!)
         
-        APIConnection()
+        URLCache.shared.removeAllCachedResponses()
         
         return true
     }
     
     func applicationWillTerminate(_ application: UIApplication) {
-        let realm = try! Realm()
         
-        try! realm.write {
-            realm.deleteAll()
-        }
     }
 }
 

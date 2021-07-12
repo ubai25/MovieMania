@@ -9,18 +9,14 @@ import UIKit
 
 class MovieDetailView: UIViewController {
     
-    let imageBaseUrl = "https://www.themoviedb.org/t/p/w440_and_h660_face"
+    let apiConnection = APIConnection()
     
-    var movie:Movie? {
+    var movie:MovieRealm? {
         didSet{
             guard let movieItem = movie else {return}
-            guard let imageUrl = URL(string: imageBaseUrl.appending(movieItem.poster_path)) else { return }
             
-            guard let imageUrl2 = URL(string: imageBaseUrl.appending(movieItem.backdrop_path ?? movieItem.poster_path)) else { return }
-            
-            posterView.load(url: imageUrl)
-            poster2View.load(url: imageUrl2)
-            
+            posterView.image = UIImage(data: movieItem.poster_path! as Data)
+            poster2View.image = UIImage(data: movieItem.backdrop_path! as Data)
             titleView.text = movieItem.title
             descView.text = movieItem.overview
             voteAverageView.text = "Rate : \(movieItem.vote_average)"

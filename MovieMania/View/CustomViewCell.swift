@@ -10,22 +10,22 @@ import UIKit
 class CustomViewCell: UITableViewCell {
     
     static let identifier = "CustomViewCell"
-    let imageBaseUrl = "https://www.themoviedb.org/t/p/w440_and_h660_face"
+    let apiConnection = APIConnection()
     
-    var movie:Movie? {
+    var movie:MovieRealm? {
         didSet {
             guard let movieItem = movie else {return}
             
-            guard let imageUrl = URL(string: imageBaseUrl.appending(movieItem.poster_path)) else { return }
-            
-            posterView.load(url: imageUrl)
+            posterView.image = UIImage(data: movieItem.poster_path! as Data)
             titleView.text = movieItem.title
             releasedDateView.text = "Released : \(movieItem.release_date)"
             voteAverageView.text = "Score : \(movieItem.vote_average)"
             voteCountView.text = "Total vote : \(movieItem.vote_count)"
             
+            let max: Int = 80 - movieItem.title.count
+            
             let overviewText = {
-                movieItem.overview.count > 100 ? "\(movieItem.overview.prefix(100))..." : String(movieItem.overview.prefix(100))
+                movieItem.overview.count > max ? "\(movieItem.overview.prefix(max))..." : movieItem.overview
             }()
             
             descView.text = overviewText

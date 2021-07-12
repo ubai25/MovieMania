@@ -8,25 +8,34 @@
 import Foundation
 import RxSwift
 import RxCocoa
-import RealmSwift
 
-struct MovieViewModel {
-    var items = PublishSubject<[Movie]>()
-    let realm = try! Realm()
+class MovieViewModel {
+    var items = PublishSubject<[MovieRealm]>()
+    let realmRepo = RealmRepo()
+    private let apiConnection = APIConnection()
+    var disposable : Disposable?
+    
+    deinit {
+        disposable?.dispose()
+    }
+    
+    init() {
+        disposable = apiConnection.callApi()
+            .subscribe(onNext: { result in
+                if(result){
+                    self.fetchItem()
+                }
+            })
+    }
     
     func fetchItem() {
-        var movieList: Results<Movie>?
-        
-        DispatchQueue.main.async {
-            print("Fetching!")
-            movieList = realm.objects(Movie.self)
+        DispatchQueue.main.async { [self] in
+            let movieList = realmRepo.selectAllMovies()
             
-            guard let movies = movieList else {
-                return
-            }
+            guard let movies = movieList else { return }
             
-            items.onNext(Array(movies))
-            items.onCompleted()
+            items.onNext(movies)
+//            items.onCompleted()
         }
     }
 }
