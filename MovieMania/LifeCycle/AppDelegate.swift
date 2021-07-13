@@ -8,11 +8,12 @@
 import UIKit
 import RealmSwift
 
-@main
+//@main
+@UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        
+//        let window = UIWindow(frame: UIScreen.main.bounds)
         let configuration = Realm.Configuration(
             schemaVersion: 1
         )
@@ -22,6 +23,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print(Realm.Configuration.defaultConfiguration.fileURL!)
         
         URLCache.shared.removeAllCachedResponses()
+        
+//        window.rootViewController = ViewController()
+//        window.makeKeyAndVisible()
+//        self.window = window
         
         return true
     }

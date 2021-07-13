@@ -28,8 +28,8 @@ struct RealmRepo {
         return Observable.create { observer -> Disposable in
             for movie in movies{
                 saveMovie(movie: movie)
+                observer.onNext(true)
             }
-            observer.onNext(true)
             observer.onCompleted()
             return Disposables.create()
         }

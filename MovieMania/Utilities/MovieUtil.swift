@@ -8,9 +8,13 @@
 import Foundation
 
 struct MovieUtil {
+    let apiConnection: APIConnection
+    
+    init() {
+        apiConnection = APIConnection()
+    }
     
     func movieToMovieRealm(movie: Movie) -> MovieRealm {
-        let apiConnection = APIConnection()
         
         let movieRealm = MovieRealm()
         

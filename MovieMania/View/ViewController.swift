@@ -47,7 +47,7 @@ class ViewController: UIViewController {
             self.present(vc, animated: true, completion: nil)
         }.disposed(by: bag)
         
-        viewModel.fetchItem()
+//        viewModel.fetchItem()
     }
     
 }
