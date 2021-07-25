@@ -7,9 +7,12 @@
 
 import UIKit
 import RxSwift
-import RxCocoa
+//import RxCocoa
 
 class ViewController: UIViewController {
+    
+    private var viewModel = MovieViewModel()
+    private var bag = DisposeBag()
     
     private let tableView: UITableView = {
         let table = UITableView()
@@ -17,9 +20,6 @@ class ViewController: UIViewController {
         return table
     
     }()
-
-    private var viewModel = MovieViewModel()
-    private var bag = DisposeBag()
 
     override func viewDidLoad() {
         super.viewDidLoad()

@@ -17,6 +17,7 @@ class CustomViewCell: UITableViewCell {
             guard let movieItem = movie else {return}
             
             posterView.image = UIImage(data: movieItem.poster_path! as Data)
+            print("height : \(posterView.frame.height)")
             titleView.text = movieItem.title
             releasedDateView.text = "Released : \(movieItem.release_date)"
             voteAverageView.text = "Score : \(movieItem.vote_average)"

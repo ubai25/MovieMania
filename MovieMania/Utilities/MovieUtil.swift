@@ -26,7 +26,7 @@ struct MovieUtil {
         movieRealm.original_title = movie.original_title
         movieRealm.overview = movie.overview
         movieRealm.popularity = movie.popularity
-        movieRealm.release_date = movie.release_date
+        movieRealm.release_date = movie.release_date ?? "-"
         
         let image = apiConnection.load(path: movie.poster_path)
         let imageData = image?.jpegData(compressionQuality: 0.7)
